@@ -169,7 +169,13 @@ while ($idx < @commits) {
 close CVSPS;
 
 # feed generated patchsets to git-cvsimport
-system("git-cvsimport -k -P $patchsets_tmp_file -C $git_dir -v -d$CVSRoot $upstreamBranch  $module");
+system("git cvsimport -k -P $patchsets_tmp_file -C $git_dir -v -d$CVSRoot $upstreamBranch  $module");
+if ($?) {
+    print STDERR "git cvsimport failed\n";
+    unlink($patchsets_tmp_file);
+    unlink($rlog_tmp_file);
+    exit(1);
+}
 
 if ($last_base_commit_idx >= 0) {
     $idx = $last_base_commit_idx;
@@ -199,6 +205,7 @@ if ($last_base_commit_idx >= 0) {
 
 # Cleanup
 unlink($patchsets_tmp_file);
+unlink($rlog_tmp_file);
 
 #
 # Subroutines
