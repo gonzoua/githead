@@ -19,7 +19,7 @@ my $rlog_tmp_file = mktemp("$tmp_dir/githead.rlog.XXXXX");
 my $patchsets_tmp_file = mktemp("$tmp_dir/githead.patchsets.XXXXX");
 
 my %opts;
-getopts('d:C:o:s:', \%opts);
+getopts('d:C:o:s:x', \%opts);
 
 my $CVSRoot;
 if (defined($opts{d})) {
@@ -77,10 +77,13 @@ my $latest_base_commit_ref;
 
 my $timespan = 10*60;
 my @known_commits;
-if (open F, "<$stateFile") {
-    undef local $/;
-    @known_commits = Load(<F>);
-    $latest_base_commit_ref = $known_commits[0] if(@known_commits);
+
+if (!defined($opts{x})) {
+    if (open F, "<$stateFile") {
+        undef local $/;
+        @known_commits = Load(<F>);
+        $latest_base_commit_ref = $known_commits[0] if(@known_commits);
+    }
 }
 
 my $rlog_timestamp = POSIX::mktime(localtime);
@@ -167,6 +170,14 @@ while ($idx < @commits) {
 }
 
 close CVSPS;
+
+# there were no patchsets
+if ($patchset == 1) {
+    print STDERR "No new patchsets\n";
+    unlink($patchsets_tmp_file);
+    unlink($rlog_tmp_file);
+    exit(0);
+}
 
 # feed generated patchsets to git-cvsimport
 system("git cvsimport -k -P $patchsets_tmp_file -C $git_dir -v -d$CVSRoot $upstreamBranch  $module");
@@ -362,6 +373,11 @@ sub gen_patchset
 
 sub usage
 {
-    print STDERR "Usage: githead.pl [-o branch] [-C gitdir] [-d CVSROOT] [-s statefile] module\n";
+    print STDERR "Usage: githead.pl [-o branch] [-C gitdir] [-d CVSROOT] [-s statefile] [-x] module\n";
+    print STDERR "\t-C gitdir\ttarget dir, default: module.git\n";
+    print STDERR "\t-d CVS ROOT\tCVS root, default env. CVSROOT variable\n";
+    print STDERR "\t-o branch\tbranch for CVS HEAD\n";
+    print STDERR "\t-s statefile\tcached CVS2git import state\n";
+    print STDERR "\t-x\t\tignore and regenerate cached CVS2git import state\n";
 }
 
