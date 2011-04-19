@@ -1,0 +1,77 @@
+=head1 NAME
+
+githead.pl  -  Maintain limited (HEAD and vendor branches only) git mirror of CVS repository. 
+
+=head1 SYNOPSIS
+
+githead.pl [B<-o> I<branch>] [B<-C> I<gitdir>] [B<-d> I<CVSROOT>] [B<-s> I<statefile>] [B<-x>] I<CVS_module>
+
+=head1 DESCRIPTION
+
+githead.pl is a script for maintaining partial git mirror of CVS repository.
+Partial means HEAD and vendor branches. Majority of CVS use cases assume that
+all "official" development activity happens in HEAD branch and developer's
+workspace is just a local copy of it. So if hypothetical developer would like
+to use git mirror of CVS repo more often than not it's just HEAD. githead.pl
+covers this particular case.
+
+githead supports incremental updates and keep state of latest successfull sync 
+in cache file. Default filename is based on CVSROOT value and located in F<~/.githead> directory
+
+=head1 OPTIONS
+
+
+=over 5
+
+=item B<-h>, B<-?>
+
+Prints out a brief help message.
+
+=item B<-o> I<branch>
+
+Specify branch for HEAD. Passed directly to L<git-cvsimport(1)>.
+
+=item B<-C> I<gitdir>
+
+Specify directory for git repository. Default if I<CVS_module>.git
+
+=item B<-d> I<CVSROOT> 
+
+Specify CVS root in format acceptable by L<cvs(1)> command. If not provided - environment variable CVSROOT is used.
+
+=item B<-s>
+
+Specify file for saveing import states. 
+
+=item B<-x>
+
+Ignore cached state and re-import all commits from CVS. Please, note, that this option does not affect git directory. It should be deleted/moved manually.
+
+=back
+
+=head1 BUGS
+
+
+=head1 EXAMPLE
+
+Create  poptop's CVS repository git mirror from the scratch. Output directory poptop.git
+
+C<githead.pl -x -o upstream -d:pserver:anonymous@poptop.cvs.sourceforge.net:/cvsroot/poptop poptop>
+
+Create or update (if it exists) git mirror for tmux CVS repo.
+
+C<githead.pl -o upstream -d:pserver:anonymous@tmux.cvs.sourceforge.net:/cvsroot/tmux tmux>
+
+=head1 FILES
+
+F<~/.githead/> - directory with cached import state files
+
+=head1 SEE ALSO
+
+L<git-cvsimport(1)>
+
+=head1 AUTHOR
+
+Oleksandr Tymoshenko <gonzo@bluezbox.com>
+
+=cut
