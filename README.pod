@@ -54,7 +54,7 @@ Ignore cached state and re-import all commits from CVS. Please, note, that this 
 
 =head1 EXAMPLE
 
-Create  poptop's CVS repository git mirror from the scratch. Output directory poptop.git
+Create  poptop's CVS repository git mirror from the scratch. Output directory is poptop.git
 
 C<githead.pl -x -o upstream -d:pserver:anonymous@poptop.cvs.sourceforge.net:/cvsroot/poptop poptop>
 
