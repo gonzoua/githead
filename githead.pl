@@ -13,13 +13,20 @@ use File::Temp qw/ :mktemp  /;
 use File::Path;
 use File::Spec;
 use Getopt::Std;
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+$main::VERSION = "0.1";
 
 my $tmp_dir =  File::Spec->tmpdir;
 my $rlog_tmp_file = mktemp("$tmp_dir/githead.rlog.XXXXX");
 my $patchsets_tmp_file = mktemp("$tmp_dir/githead.patchsets.XXXXX");
 
 my %opts;
-getopts('d:C:o:s:x', \%opts);
+getopts('d:C:o:s:xh?', \%opts);
+
+if (defined($opts{h}) || defined($opts{'?'})) {
+    usage();
+    exit(0);
+}
 
 my $CVSRoot;
 if (defined($opts{d})) {
@@ -376,8 +383,13 @@ sub usage
     print STDERR "Usage: githead.pl [-o branch] [-C gitdir] [-d CVSROOT] [-s statefile] [-x] module\n";
     print STDERR "\t-C gitdir\ttarget dir, default: module.git\n";
     print STDERR "\t-d CVS ROOT\tCVS root, default env. CVSROOT variable\n";
+    print STDERR "\t-h, -?\t\tprint this message\n";
     print STDERR "\t-o branch\tbranch for CVS HEAD\n";
     print STDERR "\t-s statefile\tcached CVS2git import state\n";
     print STDERR "\t-x\t\tignore and regenerate cached CVS2git import state\n";
 }
 
+sub HELP_MESSAGE
+{
+    usage();
+}
