@@ -12,6 +12,7 @@ use Time::Local;
 use File::Temp qw/ :mktemp  /;
 use File::Path;
 use File::Spec;
+use File::Basename;
 use Getopt::Std;
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 $main::VERSION = "0.1";
