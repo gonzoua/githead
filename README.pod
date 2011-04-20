@@ -18,10 +18,14 @@ covers this particular case.
 githead supports incremental updates and keep state of latest successfull sync 
 in cache file. Default filename is based on CVSROOT value and located in F<~/.githead> directory
 
+Requirements:
+
+  Tie::Array::Sorted
+  YAML
+
 =head1 OPTIONS
 
-
-=over 5
+=over 4
 
 =item B<-h>, B<-?>
 
@@ -48,9 +52,6 @@ Specify file for saveing import states.
 Ignore cached state and re-import all commits from CVS. Please, note, that this option does not affect git directory. It should be deleted/moved manually.
 
 =back
-
-=head1 BUGS
-
 
 =head1 EXAMPLE
 
