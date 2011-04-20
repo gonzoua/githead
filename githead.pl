@@ -40,8 +40,8 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 $main::VERSION = "0.1";
 
 my $tmp_dir =  File::Spec->tmpdir;
-my $rlog_tmp_file = mktemp("$tmp_dir/githead.rlog.XXXXX");
-my $patchsets_tmp_file = mktemp("$tmp_dir/githead.patchsets.XXXXX");
+my $rlog_tmp_file = mktemp(File::Spec->catfile($tmp_dir, "githead.rlog.XXXXX"));
+my $patchsets_tmp_file = mktemp(File::Spec->catfile($tmp_dir, "githead.patchsets.XXXXX"));
 
 my %opts;
 getopts('d:C:o:s:xh?', \%opts);
@@ -78,8 +78,9 @@ my $git_dir = "$module.git";
 $git_dir = $opts{C} if(defined($opts{C}));
 my $upstreamBranch = '';
 $upstreamBranch = "-o " . $opts{o} if(defined($opts{o}));
-my $stateFilesDir = $ENV{"HOME"} . "/.githead";
-my $stateFile = "$stateFilesDir/$module-$normalized_cvsroot.githead.state";
+my $stateFilesDir = statesDir();
+my $stateFile = File::Spec->catfile($stateFilesDir, "module-$normalized_cvsroot.githead.state");
+
 if (defined($opts{s})) {
     $stateFilesDir = dirname(defined($opts{s}));
 }
@@ -415,4 +416,10 @@ sub usage
 sub HELP_MESSAGE
 {
     usage();
+}
+
+sub statesDir {
+    return "$ENV{HOME}/.githead"    if $ENV{HOME};
+    return "$ENV{USERPROFILE}\\_githead" if $ENV{USERPROFILE};
+    return  "";
 }
