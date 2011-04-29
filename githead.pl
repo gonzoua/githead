@@ -83,6 +83,7 @@ my $stateFile = File::Spec->catfile($stateFilesDir, "module-$normalized_cvsroot.
 
 if (defined($opts{s})) {
     $stateFilesDir = dirname(defined($opts{s}));
+    $stateFile = $opts{s};
 }
 
 if (! -d $stateFilesDir) {
